@@ -4,6 +4,8 @@ class basicFunc:
     @abstractclassmethod
     def value(self, x):
         pass
+    def __str__(self):
+        return self.intro_str
 
 class solvingAgent:
     MAX_ITER = 500
@@ -11,6 +13,7 @@ class solvingAgent:
     @abstractclassmethod
     def solve(self):
         pass
+
 
 class FalsePosition(solvingAgent):
 
@@ -43,13 +46,62 @@ class FalsePosition(solvingAgent):
         print("Too many iterations")
         return
 
+class Bisection(solvingAgent):
+    def __init__(self, a, b, func):
+        self.a = a
+        self.b = b
+        self.func = func
 
+    def solve(self):
+        i = 0
+        FA = self.func.value(self.a)
 
+        while i < self.MAX_ITER:
+            self.p = self.a + (self.b - self.a)/2
+            FP = self.func.value(self.p)
+
+            if (FP == 0) or ((self.b - self.a)/2 < self.DEFAULT_TOL):
+                print(i)
+                return self.p
+
+            i += 1
+
+            if FA*FP > 0:
+                self.a = self.p
+                FA = FP
+            else:
+                self.b = self.p
+
+        print("Too many Iterations")
+        return
+
+from math import sin
 from math import cos
 from math import pi
+from math import e
 class func1(basicFunc):
+    def __init__(self):
+        self.intro_str = " f(x) = x^2-3"
     def value(self, x):
-        return cos(x) - x
+        return x*x-3
+class func2(basicFunc):
+    def __init__(self):
+        self.intro_str = " f(x) = e^(-x) * (3.2sin(x)-0.5cos(x))"
+    def value(self, x):
+        return pow(e,-x)*(3.2*sin(x)-0.5*cos(x))
 
-falsePosition = FalsePosition(p0=0.5,p1=pi/4,func= func1())
+print("function" + func1().__str__())
+falsePosition = FalsePosition(p0=1,p1=2,func= func1())
+bisection = Bisection(a = 1, b = 2, func= func1())
+print("false position method:")
 print(falsePosition.solve())
+print("bisection method")
+print(bisection.solve())
+
+print("function" + func2().__str__())
+falsePosition = FalsePosition(p0=2,p1=4,func= func2())
+bisection = Bisection(a = 2, b = 4, func= func2())
+print("false position method:")
+print(falsePosition.solve())
+print("bisection method")
+print(bisection.solve())
