@@ -75,6 +75,26 @@ class Bisection(solvingAgent):
         print("Too many Iterations")
         return
 
+class NewtonMethod(solvingAgent):
+    def __init__(self, initialGuess, func):
+        self.initialGuess = initialGuess
+        self.func = func
+    def solve(self):
+        i = 0
+        while i < self.MAX_ITER:
+            p = self.initialGuess - self.func.value(self.initialGuess)/self.d(self.initialGuess)
+
+            if abs(p - self.initialGuess) < self.DEFAULT_TOL:
+                print(i)
+                return p
+
+            i += 1
+
+            self.initialGuess = p
+
+    def d(self,v):
+        return (self.func.value(v+0.01)-self.func.value(v-0.01))/0.02
+
 from math import sin
 from math import cos
 from math import pi
@@ -90,6 +110,7 @@ class func2(basicFunc):
     def value(self, x):
         return pow(e,-x)*(3.2*sin(x)-0.5*cos(x))
 
+
 print("function" + func1().__str__())
 falsePosition = FalsePosition(p0=1,p1=2,func= func1())
 bisection = Bisection(a = 1, b = 2, func= func1())
@@ -97,6 +118,9 @@ print("false position method:")
 print(falsePosition.solve())
 print("bisection method")
 print(bisection.solve())
+print("newton method")
+newtonMethod = NewtonMethod(1,func1())
+print(newtonMethod.solve())
 
 print("function" + func2().__str__())
 falsePosition = FalsePosition(p0=2,p1=4,func= func2())
